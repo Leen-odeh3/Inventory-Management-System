@@ -15,6 +15,7 @@ namespace Simple_Inventory_Management_System
                 Console.WriteLine("3. Edit Product");
                 Console.WriteLine("4. Delete Product");
                 Console.WriteLine("5. Search for Product");
+                Console.WriteLine("6. Exit");
 
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("Enter your choice: ");
@@ -54,6 +55,13 @@ namespace Simple_Inventory_Management_System
                         string productToSearch = Console.ReadLine();
                         inventory.SearchProduct(productToSearch);
                         break;
+
+                    case "6":
+                        Console.ForegroundColor = ConsoleColor.Magenta;
+                        Console.WriteLine("Exiting...");
+                        Console.ForegroundColor = ConsoleColor.White;
+                        return;
+
 
                     default:
                         Console.WriteLine("Invalid choice. Please try again.");
