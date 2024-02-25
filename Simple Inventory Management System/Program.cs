@@ -11,6 +11,8 @@ namespace Simple_Inventory_Management_System
             while (true)
             {
                 Console.WriteLine("\n1. Add Product");
+                Console.WriteLine("2. Display Products");
+
 
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("Enter your choice: ");
@@ -40,6 +42,10 @@ namespace Simple_Inventory_Management_System
                         }
                         inventory.AddProduct(name, price, quantity);
                         inventory.DisplaySuccessMessage();
+                        break;
+
+                    case "2":
+                        inventory.DisplayProducts();
                         break;
 
                     default:
