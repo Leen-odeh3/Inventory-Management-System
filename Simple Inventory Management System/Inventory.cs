@@ -125,6 +125,21 @@ namespace Simple_Inventory_Management_System
             }
         }
 
+        public void SearchProduct(string productName)
+        {
+            var product = FindProduct(productName);
+            if (product != null)
+            {
+                Console.WriteLine($"Product found: {product.Name} - Price: ${product.Price} - Quantity: {product.Quantity}");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Product not found.");
+                Console.ForegroundColor = ConsoleColor.White;
+            }
+        }
+
         private Product FindProduct(string productName)
         {
             return products.Find(p => p.Name == productName);
