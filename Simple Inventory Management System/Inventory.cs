@@ -79,5 +79,10 @@ namespace Simple_Inventory_Management_System
                 Console.ForegroundColor = ConsoleColor.White;
             }
         }
+
+        private Product FindProduct(string productName)
+        {
+            return products.Find(p => p.Name == productName);
+        }
     }
 }
