@@ -50,7 +50,7 @@ namespace Simple_Inventory_Management_System
         private void DisplayProductDetails(Product product)
         {
             Console.WriteLine($"Product found: {product.Name} - Price: ${product.Price} - Quantity: {product.Quantity}");
-            Console.WriteLine("Enter new details:");
+            Console.WriteLine("Enter new details (leave blank to keep unchanged):");
         }
 
         private void UpdateProductDetails(Product product)
@@ -61,11 +61,37 @@ namespace Simple_Inventory_Management_System
                 product.Name = newName;
             }
 
-            decimal newPrice = GetNewPriceFromUser();
-            product.Price = newPrice;
+            string newPriceStr = GetNewPriceFromUser();
+            if (!string.IsNullOrEmpty(newPriceStr))
+            {
+                decimal newPrice;
+                if (decimal.TryParse(newPriceStr, out newPrice))
+                {
+                    product.Price = newPrice;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Invalid price format. Price not updated.");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+            }
 
-            int newQuantity = GetNewQuantityFromUser();
-            product.Quantity = newQuantity;
+            string newQuantityStr = GetNewQuantityFromUser();
+            if (!string.IsNullOrEmpty(newQuantityStr))
+            {
+                int newQuantity;
+                if (int.TryParse(newQuantityStr, out newQuantity))
+                {
+                    product.Quantity = newQuantity;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Invalid quantity format. Quantity not updated.");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+            }
         }
 
         private string GetNewNameFromUser()
@@ -74,35 +100,18 @@ namespace Simple_Inventory_Management_System
             return Console.ReadLine();
         }
 
-        private decimal GetNewPriceFromUser()
+        private string GetNewPriceFromUser()
         {
-            decimal newPrice;
             Console.Write("New price: ");
-            string newPriceStr = Console.ReadLine();
-            while (!decimal.TryParse(newPriceStr, out newPrice))
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Invalid price format. Please enter a valid price:");
-                Console.ForegroundColor = ConsoleColor.White;
-                newPriceStr = Console.ReadLine();
-            }
-            return newPrice;
+            return Console.ReadLine();
         }
 
-        private int GetNewQuantityFromUser()
+        private string GetNewQuantityFromUser()
         {
-            int newQuantity;
             Console.Write("New quantity: ");
-            string newQuantityStr = Console.ReadLine();
-            while (!int.TryParse(newQuantityStr, out newQuantity))
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Invalid quantity format. Please enter a valid quantity:");
-                Console.ForegroundColor = ConsoleColor.White;
-                newQuantityStr = Console.ReadLine();
-            }
-            return newQuantity;
+            return Console.ReadLine();
         }
+
 
     }
 }
