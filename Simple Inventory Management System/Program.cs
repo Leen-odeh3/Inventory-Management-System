@@ -12,7 +12,7 @@ namespace Simple_Inventory_Management_System
             {
                 Console.WriteLine("\n1. Add Product");
                 Console.WriteLine("2. Display Products");
-
+                Console.WriteLine("3. Edit Product");
 
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("Enter your choice: ");
@@ -33,6 +33,12 @@ namespace Simple_Inventory_Management_System
 
                     case "2":
                         inventory.DisplayProducts();
+                        break;
+
+                    case "3":
+                        Console.WriteLine("Enter the name of the product to edit: ");
+                        string productName = Console.ReadLine();
+                        inventory.EditProduct(productName);
                         break;
 
                     default:

@@ -28,5 +28,40 @@ namespace Simple_Inventory_Management_System
             }
         }
 
+        public void EditProduct(string productName)
+        {
+            Product product = products.Find(p => p.Name == productName);
+            if (product != null)
+            {
+                Console.WriteLine($"Product found: {product.Name} - Price: ${product.Price} - Quantity: {product.Quantity}");
+                Console.WriteLine("Enter new details:");
+
+                Console.Write("New name (leave blank to keep unchanged): ");
+                string newName = Console.ReadLine();
+                if (!string.IsNullOrEmpty(newName))
+                {
+                    product.Name = newName;
+                }
+
+                Console.Write("New price : ");
+                string newPriceStr = Console.ReadLine();
+                if (!string.IsNullOrEmpty(newPriceStr))
+                {
+                    decimal newPrice;
+                    if (decimal.TryParse(newPriceStr, out newPrice))
+                    {
+                        product.Price = newPrice;
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Invalid price format. Price not updated.");
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+                }
+
+            }
+        }
+
     }
 }
