@@ -63,5 +63,21 @@ namespace Simple_Inventory_Management_System
             }
         }
 
+        public void DeleteProduct(string productName)
+        {
+            Product product = products.Find(p => p.Name == productName);
+            if (product != null)
+            {
+                products.Remove(product);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Product deleted successfully.");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Product not found.");
+                Console.ForegroundColor = ConsoleColor.White;
+            }
+        }
     }
 }

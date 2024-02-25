@@ -13,6 +13,7 @@ namespace Simple_Inventory_Management_System
                 Console.WriteLine("\n1. Add Product");
                 Console.WriteLine("2. Display Products");
                 Console.WriteLine("3. Edit Product");
+                Console.WriteLine("4. Delete Product");
 
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("Enter your choice: ");
@@ -39,6 +40,12 @@ namespace Simple_Inventory_Management_System
                         Console.WriteLine("Enter the name of the product to edit: ");
                         string productName = Console.ReadLine();
                         inventory.EditProduct(productName);
+                        break;
+
+                    case "4":
+                        Console.WriteLine("Enter the name of the product to delete: ");
+                        string productToDelete = Console.ReadLine();
+                        inventory.DeleteProduct(productToDelete);
                         break;
 
                     default:
