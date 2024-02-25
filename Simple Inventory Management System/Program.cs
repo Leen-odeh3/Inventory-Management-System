@@ -27,6 +27,7 @@ namespace Simple_Inventory_Management_System
                         Console.Write("Enter product quantity: ");
                         int quantity = int.Parse(Console.ReadLine());
                         inventory.AddProduct(name, price, quantity);
+                        inventory.DisplaySuccessMessage();
                         break;
 
                     default:

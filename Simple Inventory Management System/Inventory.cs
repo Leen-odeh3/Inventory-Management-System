@@ -14,6 +14,10 @@ namespace Simple_Inventory_Management_System
         {
             Product product = new Product { Name = name, Price = price, Quantity = quantity };
             products.Add(product);
+        }
+
+        public void DisplaySuccessMessage()
+        {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Product added successfully.");
             Console.ForegroundColor = ConsoleColor.White;
