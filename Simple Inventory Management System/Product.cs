@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Simple_Inventory_Management_System
 {
-    class Product
+   public class Product
     {
         public string Name { get; set; }
         public decimal Price { get; set; }
