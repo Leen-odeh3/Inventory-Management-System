@@ -65,7 +65,7 @@ namespace Simple_Inventory_Management_System
 
         public void DeleteProduct(string productName)
         {
-            Product product = products.Find(p => p.Name == productName);
+            var product = FindProduct(productName);
             if (product != null)
             {
                 products.Remove(product);
