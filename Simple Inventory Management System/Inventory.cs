@@ -18,5 +18,15 @@ namespace Simple_Inventory_Management_System
             Console.WriteLine("Product added successfully.");
             Console.ForegroundColor = ConsoleColor.White;
         }
+
+        public void DisplayProducts()
+        {
+            Console.WriteLine("Inventory:");
+            for (int i = 0; i < products.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {products[i].Name} - Price: ${products[i].Price} - Quantity: {products[i].Quantity}");
+            }
+        }
+
     }
 }
