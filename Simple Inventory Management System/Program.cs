@@ -21,11 +21,23 @@ namespace Simple_Inventory_Management_System
                 {
                     case "1":
                         Console.Write("Enter product name: ");
+
                         string name = Console.ReadLine();
                         Console.Write("Enter product price: ");
-                        decimal price = decimal.Parse(Console.ReadLine());
+
+                        decimal price;
+                        while (!decimal.TryParse(Console.ReadLine(), out price))
+                        {
+                            Console.WriteLine("Invalid input. Please enter a valid decimal value for the price.");
+                            Console.Write("Enter product price: ");
+                        }
+                        int quantity;
                         Console.Write("Enter product quantity: ");
-                        int quantity = int.Parse(Console.ReadLine());
+                        while (!int.TryParse(Console.ReadLine(), out quantity))
+                        {
+                            Console.WriteLine("Invalid input. Please enter a valid integer value for the quantity.");
+                            Console.Write("Enter product quantity: ");
+                        }
                         inventory.AddProduct(name, price, quantity);
                         inventory.DisplaySuccessMessage();
                         break;
