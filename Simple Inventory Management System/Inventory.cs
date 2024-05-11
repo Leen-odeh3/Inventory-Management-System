@@ -140,9 +140,6 @@ namespace Simple_Inventory_Management_System
             }
         }
 
-        private Product FindProduct(string productName)
-        {
-            return products.Find(p => p.Name == productName);
-        }
+        
     }
 }
