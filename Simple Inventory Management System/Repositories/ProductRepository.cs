@@ -1,68 +1,72 @@
 ﻿using MongoDB.Driver;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace Simple_Inventory_Management_System.Repositories
+namespace Simple_Inventory_Management_System.Repositories;
+
+public class ProductRepository : IProductRepository
 {
-    public class ProductRepository : IProductRepository
+    private readonly IMongoCollection<Product> _products;
+    public ProductRepository(IMongoDatabase database, string collectionName)
     {
-        private readonly IMongoCollection<Product> _products;
-
-        public ProductRepository(IMongoDatabase database, string collectionName)
+        _products = database.GetCollection<Product>(collectionName);
+    }
+    public async Task AddProductAsync(Product product)
+    {
+        await _products.InsertOneAsync(product);
+    }
+    public async Task<List<Product>> GetAllProductsAsync()
+    {
+        return await _products.Find(_ => true).Project(p => new Product
         {
-            _products = database.GetCollection<Product>(collectionName);
+            ProductID = p.ProductID,
+            Name = p.Name,
+            Price = p.Price,
+            Quantity = p.Quantity
+        }).ToListAsync();
+    }
+    public async Task DeleteProductAsync(string productName)
+    {
+        var filter = Builders<Product>.Filter.Eq("Name", productName);
+        await _products.DeleteOneAsync(filter);
+    }
+    public async Task<List<Product>> SearchProductAsync(string productName)
+    {
+        var filter = Builders<Product>.Filter.Regex("Name", new MongoDB.Bson.BsonRegularExpression($".*{productName}.*", "i"));
+        var products = await _products.Find(filter).ToListAsync();
+
+        if (products.Count == 0)
+        {
+            Console.WriteLine("No product found matching the search criteria.");
         }
 
-        public async Task AddProductAsync(Product product)
+        return products;
+    }
+    public async Task UpdateProductAsync(string productName, string newName, decimal newPrice, int newQuantity)
+    {
+        var update = Builders<Product>.Update;
+        var updateDefinition = new List<UpdateDefinition<Product>>();
+
+        if (!string.IsNullOrEmpty(newName))
         {
-            await _products.InsertOneAsync(product);
+            updateDefinition.Add(update.Set(p => p.Name, newName));
         }
 
-        public async Task<List<Product>> GetAllProductsAsync()
+        if (newPrice > 0)
         {
-            return await _products.Find(_ => true).ToListAsync();
+            updateDefinition.Add(update.Set(p => p.Price, newPrice));
         }
 
-        public async Task DeleteProductAsync(string productName)
+        if (newQuantity >= 0)
         {
-            var filter = Builders<Product>.Filter.Eq("Name", productName);
-            await _products.DeleteOneAsync(filter);
+            updateDefinition.Add(update.Set(p => p.Quantity, newQuantity));
         }
 
-        public async Task<List<Product>> SearchProductAsync(string productName)
+        if (updateDefinition.Count == 0)
         {
-            var filter = Builders<Product>.Filter.Regex("Name", new MongoDB.Bson.BsonRegularExpression(productName, "i"));
-            return await _products.Find(filter).ToListAsync();
+            return;
         }
 
-        public async Task UpdateProductAsync(string productName, string newName, decimal newPrice, int newQuantity)
-        {
-            var update = Builders<Product>.Update;
-            var updateDefinition = new List<UpdateDefinition<Product>>();
-
-            if (!string.IsNullOrEmpty(newName))
-            {
-                updateDefinition.Add(update.Set(p => p.Name, newName));
-            }
-
-            if (newPrice > 0)
-            {
-                updateDefinition.Add(update.Set(p => p.Price, newPrice));
-            }
-
-            if (newQuantity >= 0)
-            {
-                updateDefinition.Add(update.Set(p => p.Quantity, newQuantity));
-            }
-
-            if (updateDefinition.Count == 0)
-            {
-                return;
-            }
-
-            var filter = Builders<Product>.Filter.Eq("Name", productName);
-            var combinedUpdate = update.Combine(updateDefinition);
-            await _products.UpdateOneAsync(filter, combinedUpdate);
-        }
+        var filter = Builders<Product>.Filter.Eq("Name", productName);
+        var combinedUpdate = update.Combine(updateDefinition);
+        await _products.UpdateOneAsync(filter, combinedUpdate);
     }
 }

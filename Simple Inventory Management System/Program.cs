@@ -56,11 +56,19 @@ namespace Simple_Inventory_Management_System
 
                     case "2":
                         var products = await productRepository.GetAllProductsAsync();
-                        foreach (var product in products)
+                        if (products.Count == 0)
                         {
-                            Console.WriteLine($"ID: {product.ProductID}, Name: {product.Name}, Price: {product.Price}, Quantity: {product.Quantity}");
+                            Console.WriteLine("There are no products currently available.");
+                        }
+                        else
+                        {
+                            foreach (var product in products)
+                            {
+                                Console.WriteLine($"ID: {product.ProductID}, Name: {product.Name}, Price: {product.Price}, Quantity: {product.Quantity}");
+                            }
                         }
                         break;
+
 
                     case "3":
                         Console.WriteLine("Enter the name of the product to edit: ");
