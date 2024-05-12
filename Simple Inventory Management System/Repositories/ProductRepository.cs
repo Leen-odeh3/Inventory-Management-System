@@ -36,7 +36,7 @@ public class ProductRepository
         var productId = await GetProductIdAsync(productName);
         if (productId.HasValue)
         {
-            const string query = "UPDATE Products SET Name = @NewName, Price = @NewPrice, Quantity = @NewQuantity WHERE Id = @ProductId";
+            const string query = "UPDATE Products SET Name = @NewName, Price = @NewPrice, Quantity = @NewQuantity WHERE ProductID = @ProductId";
             var parameters = new Dictionary<string, object>
             {
                 { "@NewName", newName },
@@ -55,23 +55,22 @@ public class ProductRepository
         }
     }
 
-    public async Task DeleteProductAsync(string productName)
+    public async Task DeleteProductAsync(int productId)
     {
-        var productId = await GetProductIdAsync(productName);
-        if (productId.HasValue)
+        try
         {
-            const string query = "DELETE FROM Products WHERE Id = @ProductId";
+            const string query = "DELETE FROM Products WHERE ProductID = @ProductId";
             var parameters = new Dictionary<string, object>
             {
-                { "@ProductId", productId.Value }
+                { "@ProductId", productId }
             };
 
             await ExecuteNonQueryAsync(query, parameters, "Product deleted successfully.");
         }
-        else
+        catch (SqlException ex)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Product with name '{productName}' was not found.");
+            Console.WriteLine($"Failed to delete product: {ex.Message}");
             Console.ForegroundColor = ConsoleColor.White;
         }
     }
@@ -89,14 +88,14 @@ public class ProductRepository
 
     private async Task<int?> GetProductIdAsync(string productName)
     {
-        const string query = "SELECT Id FROM Products WHERE Name = @ProductName";
+        const string query = "SELECT ProductID FROM Products WHERE Name = @ProductName";
         var parameters = new Dictionary<string, object>
         {
             { "@ProductName", productName }
         };
 
         var reader = await ExecuteReaderAsync(query, parameters);
-        return await reader.ReadAsync() ? (int?)reader["Id"] : null;
+        return await reader.ReadAsync() ? (int?)reader["ProductID"] : null;
     }
 
     private async Task ExecuteNonQueryAsync(string query, Dictionary<string, object> parameters, string successMessage)
@@ -124,9 +123,16 @@ public class ProductRepository
         {
             await using var reader = await ExecuteReaderAsync(query, parameters);
             Console.WriteLine("Inventory:");
-            while (await reader.ReadAsync())
+            if (!reader.HasRows)
             {
-                Console.WriteLine($"{reader["Name"]} - Price: ${reader["Price"]} - Quantity: {reader["Quantity"]}");
+                Console.WriteLine("No products found.");
+            }
+            else
+            {
+                while (await reader.ReadAsync())
+                {
+                    Console.WriteLine($"{reader["Name"]} - Price: ${reader["Price"]} - Quantity: {reader["Quantity"]}");
+                }
             }
         }
         catch (SqlException ex)
@@ -136,6 +142,7 @@ public class ProductRepository
             Console.ForegroundColor = ConsoleColor.White;
         }
     }
+
 
     private async Task<SqlDataReader> ExecuteReaderAsync(string query, Dictionary<string, object>? parameters = null)
     {
