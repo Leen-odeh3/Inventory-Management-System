@@ -24,37 +24,6 @@ public class ProductRepository : IProductRepository
         return await _products.Find(_ => true).ToListAsync();
     }
 
-    public async Task<bool> UpdateProductAsync(string productName, Product product)
-    {
-        var update = Builders<Product>.Update;
-        var updateDefinition = new List<UpdateDefinition<Product>>();
-
-        if (product.Name != null)
-        {
-            updateDefinition.Add(update.Set(p => p.Name, product.Name));
-        }
-
-        if (product.Price != null)
-        {
-            updateDefinition.Add(update.Set(p => p.Price, product.Price));
-        }
-
-        if (product.Quantity != null)
-        {
-            updateDefinition.Add(update.Set(p => p.Quantity, product.Quantity));
-        }
-
-        if (updateDefinition.Count == 0)
-        {
-            return false;
-        }
-
-        var filter = Builders<Product>.Filter.Eq("Name", productName);
-        var combinedUpdate = update.Combine(updateDefinition);
-        var result = await _products.UpdateOneAsync(filter, combinedUpdate);
-        return result.ModifiedCount > 0;
-    }
-
     public async Task DeleteProductAsync(string productName)
     {
         var filter = Builders<Product>.Filter.Eq("Name", productName);
@@ -67,8 +36,34 @@ public class ProductRepository : IProductRepository
         return await _products.Find(filter).ToListAsync();
     }
 
-    public Task UpdateProductAsync(string productName, string newName, decimal newPrice, int newQuantity)
+    public async Task UpdateProductAsync(string productName, string newName, decimal newPrice, int newQuantity)
     {
-        throw new NotImplementedException();
+        var update = Builders<Product>.Update;
+        var updateDefinition = new List<UpdateDefinition<Product>>();
+
+        if (!string.IsNullOrEmpty(newName))
+        {
+            updateDefinition.Add(update.Set(p => p.Name, newName));
+        }
+
+        if (newPrice > 0)
+        {
+            updateDefinition.Add(update.Set(p => p.Price, newPrice));
+        }
+
+        if (newQuantity >= 0)
+        {
+            updateDefinition.Add(update.Set(p => p.Quantity, newQuantity));
+        }
+
+        if (updateDefinition.Count == 0)
+        {
+            return; 
+        }
+
+        var filter = Builders<Product>.Filter.Eq("Name", productName);
+        var combinedUpdate = update.Combine(updateDefinition);
+        await _products.UpdateOneAsync(filter, combinedUpdate);
     }
+
 }
