@@ -85,6 +85,33 @@ public class ProductRepository
 
         await DisplayProductListAsync(query, parameters);
     }
+    private async Task DisplayProductListAsync(string query, Dictionary<string, object>? parameters = null)
+    {
+        try
+        {
+            await using var reader = await ExecuteReaderAsync(query, parameters);
+
+            Console.WriteLine("Inventory:");
+            if (!reader.HasRows)
+            {
+                Console.WriteLine("No products found.");
+            }
+            else
+            {
+                while (await reader.ReadAsync())
+                {
+                    Console.WriteLine($"{reader["Name"]} - Price: ${reader["Price"]} - Quantity: {reader["Quantity"]}");
+                }
+            }
+        }
+        catch (SqlException ex)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Failed operation: {ex.Message}");
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+    }
+
 
     private async Task<int?> GetProductIdAsync(string productName)
     {
@@ -117,22 +144,23 @@ public class ProductRepository
         }
     }
 
-    private async Task DisplayProductListAsync(string query, Dictionary<string, object>? parameters = null)
+    private async Task<List<Product>> GetProductListAsync(string query, Dictionary<string, object>? parameters = null)
     {
+        var productList = new List<Product>();
+
         try
         {
             await using var reader = await ExecuteReaderAsync(query, parameters);
-            Console.WriteLine("Inventory:");
-            if (!reader.HasRows)
+
+            while (await reader.ReadAsync())
             {
-                Console.WriteLine("No products found.");
-            }
-            else
-            {
-                while (await reader.ReadAsync())
+                var product = new Product
                 {
-                    Console.WriteLine($"{reader["Name"]} - Price: ${reader["Price"]} - Quantity: {reader["Quantity"]}");
-                }
+                    Name = reader["Name"].ToString(),
+                    Price = Convert.ToDecimal(reader["Price"]),
+                    Quantity = Convert.ToInt32(reader["Quantity"])
+                };
+                productList.Add(product);
             }
         }
         catch (SqlException ex)
@@ -141,6 +169,8 @@ public class ProductRepository
             Console.WriteLine($"Failed operation: {ex.Message}");
             Console.ForegroundColor = ConsoleColor.White;
         }
+
+        return productList;
     }
 
 
@@ -148,14 +178,17 @@ public class ProductRepository
     {
         var connection = new SqlConnection(connectionString);
         var command = new SqlCommand(query, connection);
+
         if (parameters != null)
         {
             AddParameters(command, parameters);
         }
 
         await connection.OpenAsync();
-        return await command.ExecuteReaderAsync(CommandBehavior.CloseConnection);
+
+        return await command.ExecuteReaderAsync(CommandBehavior.SequentialAccess | CommandBehavior.CloseConnection);
     }
+
 
     private static void AddParameters(SqlCommand command, Dictionary<string, object> parameters)
     {

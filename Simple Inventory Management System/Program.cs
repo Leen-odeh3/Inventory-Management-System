@@ -8,7 +8,7 @@ class Program
     static async Task Main(string[] args)
     {
         var config = new ConfigurationBuilder()
-            .AddJsonFile(@"appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile("C:\\Users\\hp\\Desktop\\New folder\\Simple Inventory Management System\\appsettings.json", optional: false, reloadOnChange: true)
             .Build();
 
         var connectionString = config.GetConnectionString("Default");
@@ -23,7 +23,7 @@ class Program
             do
             {
                 Console.WriteLine("\nSelect from the options\n1.Add Product\n2.Display Products\n3.Edit Product\n4.Delete Product\n5.Search Product");
-                int choice = int.Parse(Console.ReadLine());
+                var choice = int.Parse(Console.ReadLine());
                 switch (choice)
                 {
                     case 1:
@@ -31,14 +31,13 @@ class Program
                         Console.WriteLine("Enter item name:");
                         var itemName = Console.ReadLine();
                         Console.WriteLine("Enter item price:");
-                        decimal itemPrice;
-                        while (!decimal.TryParse(Console.ReadLine(), out itemPrice) || itemPrice < 0)
+                        while (!decimal.TryParse(Console.ReadLine(), out var itemPrice) || itemPrice < 0)
                         {
                             Console.WriteLine("Invalid price. Please enter a positive number.");
                         }
                         Console.WriteLine("Enter item quantity:");
-                        int itemQuantity;
-                        while (!int.TryParse(Console.ReadLine(), out itemQuantity) || itemQuantity < 0)
+                       
+                        while (!int.TryParse(Console.ReadLine(), out var itemQuantity) || itemQuantity < 0)
                         {
                             Console.WriteLine("Invalid quantity. Please enter a positive integer.");
                         }
@@ -92,7 +91,7 @@ class Program
                 }
                 Console.WriteLine("\nDo you want to continue? (Yes/No)");
                 answer = Console.ReadLine();
-            } while (answer.ToUpper() == "YES" || answer.ToUpper() == "Y");
+            } while (string.Equals(answer, "YES", StringComparison.OrdinalIgnoreCase) || string.Equals(answer, "Y", StringComparison.OrdinalIgnoreCase));
         }
         catch (Exception e)
         {
