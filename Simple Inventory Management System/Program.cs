@@ -8,7 +8,7 @@ class Program
     static async Task Main(string[] args)
     {
         var config = new ConfigurationBuilder()
-            .AddJsonFile("C:\\Users\\hp\\Desktop\\New folder\\Simple Inventory Management System\\appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile("/appsettings.json", optional: false, reloadOnChange: true)
             .Build();
 
         var connectionString = config.GetConnectionString("Default");
